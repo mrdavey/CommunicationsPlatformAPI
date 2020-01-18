@@ -1,0 +1,27 @@
+{
+  "name": "communicationsplatformapi",
+  "version": "1.0.0",
+  "description": "REST API for reliable email sending and logging",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrdavey/CommunicationsPlatformAPI.git"
+  },
+  "author": "David Truong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrdavey/CommunicationsPlatformAPI/issues"
+  },
+  "homepage": "https://github.com/mrdavey/CommunicationsPlatformAPI#readme",
+  "dependencies": {
+    "async-retry": "^1.3.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "node-fetch": "^2.6.0"
+  }
+}
