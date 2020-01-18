@@ -1,4 +1,4 @@
-const { precheckParams } = require("./email")
+const { precheckParams, sendEmail } = require("./email")
 
 let validFields = {
 	to: "fake+test@df.com",
@@ -30,4 +30,30 @@ test('email address is valid', () => {
 test('html is cleaned', () => {
     let safeParams = precheckParams(validFields)
     expect(safeParams.body).toBe("Your Bill $10");
+})
+
+jest.mock("../services/sendGrid")
+const { sgSendEmail } = require("../services/sendGrid")
+
+jest.mock("../services/postMark")
+const { pmSendEmail } = require("../services/postMark")
+
+test('email is sent via Sendgrid, without PostMark', async () => {
+    sgSendEmail.mockImplementation(() => {})
+    pmSendEmail.mockImplementation(() => {})
+    
+    await sendEmail(validFields)
+
+    expect(sgSendEmail).toHaveBeenCalled()
+    expect(pmSendEmail).not.toHaveBeenCalled()
+})
+
+test('email is sent via PostMark when Sendgrid fails', async () => {
+    sgSendEmail.mockImplementation(() => { throw Error("SendGrid mock error") })
+    pmSendEmail.mockImplementation(async () => true)
+    
+    await sendEmail(validFields)
+
+    expect(sgSendEmail).toHaveBeenCalled()
+    expect(pmSendEmail).toHaveBeenCalled()
 })
