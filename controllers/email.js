@@ -1,5 +1,5 @@
 const { cleanHTML, isValidEmail, isValidString } = require("../helpers/parseInput");
-
+const { sgSendEmail } = require("../services/sendGrid")
 /**
  * Ensures that the required parameters are valid and cleans the HTML body
  * @param { {} } params The parameters received
@@ -36,5 +36,5 @@ exports.precheckParams = (params) => {
 }
 
 exports.sendEmail = async (params) => {
-    console.log(params)
+    await sgSendEmail({ ...params })
 }
