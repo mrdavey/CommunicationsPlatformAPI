@@ -22,7 +22,9 @@ router.post("/email", async (req, res) => {
             await sendEmail(safeParams)
             return res.json({ success: true, message: "success" })
         } catch (e) {
-            return res.status(400).json({ success: false, message: e.message });
+            let errorMessage = e.message
+            console.log(`To be logged: ${errorMessage}`)
+            return res.status(400).json({ success: false, message: errorMessage });
         }
     }
     return res.status(400).json({ success: false, message: "Invalid auth key"})

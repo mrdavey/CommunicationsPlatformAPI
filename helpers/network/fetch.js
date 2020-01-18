@@ -51,9 +51,9 @@ async function makeRequest(url, body, headers, method) {
 	let statusText = response.statusText
 
 	if (!(status >= 200 && status < 300)) {
-		let message = `Fetch error: ${status}: ${statusText}`
+		let message = `Fetch error for ${url}: ${status}: ${statusText}`
 
-		let responseBody = await response.json().catch((e) => { message += `, No json body returned`})
+		let responseBody = await response.json().catch(e => { /* do nothing when no json body */ })
 		if (responseBody) {
 			message += `, responseBody: ${JSON.stringify(responseBody)}`
 		}
