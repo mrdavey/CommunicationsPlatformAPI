@@ -1,4 +1,4 @@
-const { cleanHTML, isValidEmail, isValidString } = require("../helpers/parseInput");
+const { cleanHTML, isValidEmail, isValidString } = require("../helpers/parseInput")
 const { sgSendEmail } = require("../services/sendGrid")
 const { pmSendEmail } = require("../services/postMark")
 const { logEmail, logStatus } = require("./datastore")
@@ -6,9 +6,11 @@ const { logEmail, logStatus } = require("./datastore")
 /**
  * Ensures that the required parameters are valid and cleans the HTML body
  * @param { {} } params The parameters received
+ * @param { Boolean } enableHtmlEmail Whether HTML emails are enabled
+ * @param { [] } allowedHtmlTags If HTML emails is enabled, then the HTML tags that are allowed
  * @returns { {} } A dictionary of the cleaned parameters. On error, returns an error object with the reason
  */
-exports.precheckParams = (params) => {
+exports.precheckParams = (params, enableHtmlEmail=false, allowedHtmlTags=[]) => {
     let requiredParams = { 
         to: params.to, 
         to_name: params.to_name, 
@@ -16,11 +18,11 @@ exports.precheckParams = (params) => {
         from_name: params.from_name, 
         subject: params.subject, 
         body: params.body 
-    };
+    }
 
     // Ensure we have the required parameters and they are all strings
     let missingParams = Object.keys(requiredParams).filter((key) => {
-        if (!requiredParams[key] || !isValidString(requiredParams[key])) return key;
+        if (!requiredParams[key] || !isValidString(requiredParams[key])) return key
     })
 
     if (missingParams.length > 0) {
@@ -29,13 +31,11 @@ exports.precheckParams = (params) => {
 
     // Ensure the email addresses are valid
     if (requiredParams.to && !isValidEmail(requiredParams.to) || requiredParams.from && !isValidEmail(requiredParams.from)) {
-		throw Error(`An email address is invalid. Emails addresses given: ${requiredParams.to}, ${requiredParams.from}`);
+		throw Error(`An email address is invalid. Emails addresses given: ${requiredParams.to}, ${requiredParams.from}`)
 	}
 
-    // Convert body HTML to plain text
-    let cleanBody = cleanHTML(requiredParams.body);
-
-    return { ...requiredParams, body: cleanBody }
+    let cleanBody = cleanHTML(requiredParams.body, allowedHtmlTags)
+	return { ...requiredParams, body: cleanBody, isHTML: enableHtmlEmail }
 }
 
 /**
@@ -52,7 +52,7 @@ exports.sendEmail = async (params) => {
         await pmSendEmail({ ...params }).catch(e => {
             throw Error(`${message}, unable to send via Postmark: ${e.message}`) 
         })
-        logStatus({ message: `${message}, sent via PostMark instead`})
+        logStatus({ message: `${message}. Sent via PostMark instead!`})
         service = "PostMark"
     }
     logEmail({ params, meta: { service, sent: Date.now() } })

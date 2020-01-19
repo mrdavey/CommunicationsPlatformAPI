@@ -28,7 +28,7 @@ test('email address is valid', () => {
 })
 
 test('html is cleaned', () => {
-    let safeParams = precheckParams(validFields)
+    let safeParams = precheckParams(validFields, false)
     expect(safeParams.body).toBe("Your Bill $10");
 })
 
