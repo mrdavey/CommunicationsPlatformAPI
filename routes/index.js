@@ -9,8 +9,7 @@ const { Services } = require("../helpers/constants")
 
 const webhookUserAuth = basicAuth({
 	users: {
-		sendgrid: process.env.WEBHOOK_AUTH_SENDGRID,
-		postmark: process.env.WEBHOOK_AUTH_POSTMARK
+		webhook: process.env.WEBHOOK_AUTH,
 	},
 	challenge: false
 })

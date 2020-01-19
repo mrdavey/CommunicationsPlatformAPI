@@ -54,16 +54,16 @@ A simple REST API for reliable email sending and logging.
 #### Sendgrid
 1. In your Sendgrid [mail settings](https://app.sendgrid.com/settings/mail_settings), enable `Event Notifications` and select the relevant 'Open' and 'Click' events.
 2. Deploy your web service and enter the `/sgWebhook` endpoint in the `HTTP POST URL` section. This should be a HTTPS endpoint.
-    - Be sure to include the basic authentication details in your `.env` file under `WEBHOOK_AUTH_SENDGRID`
-        - e.g.  `https://sendgrid:password123@YOUR_WEB_SERVICE.COM/sgWebhook`
+    - Be sure to include the basic authentication details in your `.env` file under `WEBHOOK_AUTH`
+        - e.g.  `https://webhook:password123@YOUR_WEB_SERVICE.COM/sgWebhook`
 3. Save the settings in Sendgrid
 4. Ensure the appropriate `click_tracking` and `open_tracking` values are set in the [sendGrid.js](/services/sendGrid.js) file.
 
 #### Postmark
 1. In your Postmark servers settings, enable `Webhooks` by selecting 'Add Webhook'.
 2. Deploy your web service and enter the `/pmWebhook` endpoint in the `Webhook URL` section. This should be a HTTPS endpoint.
-    - Be sure to include the basic authentication details in your `.env` file under `WEBHOOK_AUTH_POSTMARK`
-        - e.g.  `https://postmark:password456@YOUR_WEB_SERVICE.COM/pmWebhook`
+    - Be sure to include the basic authentication details in your `.env` file under `WEBHOOK_AUTH`
+        - e.g.  `https://webhook:password123@YOUR_WEB_SERVICE.COM/pmWebhook`
 3. Select the relevant 'Open' and 'Link Click' events.
 4. Save the webhook.
 4. Ensure the appropriate `TrackOpens` and `TrackLinks` values are set in the [postMark.js](/services/postMark.js) file.
@@ -82,3 +82,4 @@ Ensure you've installed the dependencies, then in the terminal: `npm test`
 ## To do
  - Implement a datastore (GCP or AWS) to make emails, status logs, and open/click events queryable
  - When datastore is implemented, add metadata (Sendgrid = `custom_args`, Postmark = `Metadata`) to each email sent with a UID. This will enable each click/open event to be associated with a specific logged email.
+ - Enable scheduling of emails based on timezones.
