@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const { precheckParams, sendEmail } = require("../controllers/email")
+const { logStatus } = require("../controllers/datastore")
 
 /**
  * Sends an email using the information included in the call
@@ -23,7 +24,7 @@ router.post("/email", async (req, res) => {
             return res.json({ success: true, message: "success" })
         } catch (e) {
             let errorMessage = e.message
-            console.log(`To be logged: ${errorMessage}`)
+            logStatus({ message: errorMessage, isError: true })
             return res.status(400).json({ success: false, message: errorMessage });
         }
     }
