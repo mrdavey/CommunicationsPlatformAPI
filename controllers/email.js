@@ -1,6 +1,7 @@
 const { cleanHTML, isValidEmail, isValidString } = require("../helpers/parseInput");
 const { sgSendEmail } = require("../services/sendGrid")
 const { pmSendEmail } = require("../services/postMark")
+const { logEmail, logStatus } = require("./datastore")
 
 /**
  * Ensures that the required parameters are valid and cleans the HTML body
@@ -42,12 +43,17 @@ exports.precheckParams = (params) => {
  * @param { {} } params The parsed and clean parameters
  */
 exports.sendEmail = async (params) => {
+    let service = "SendGrid"
     try {
         await sgSendEmail({ ...params })
-        console.log('Successfully sent with Sendgrid')
+        logStatus({ message: "Successfully sent email via Sendgrid" })
     } catch (e) {
-        console.log(`Error sending with Sendgrid: ${e.message}\nTrying with Postmark...`)
-        await pmSendEmail({ ...params }).catch(e => { throw Error(`Could not send via Postmark: ${e.message}`) })
-        console.log('Successfully sent with Postmark')
+        let message = `Error sending with Sendgrid: ${e.message}`
+        await pmSendEmail({ ...params }).catch(e => {
+            throw Error(`${message}, unable to send via Postmark: ${e.message}`) 
+        })
+        logStatus({ message: `${message}, sent via PostMark instead`})
+        service = "PostMark"
     }
+    logEmail({ params, meta: { service, sent: Date.now() } })
 }
